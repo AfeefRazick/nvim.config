@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -153,6 +153,15 @@ vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
+
+--  -- My Custom Configurations --
+
+-- Disable netrw for nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- Replace trailing tilde with empty char
+vim.opt.fillchars = { eob = ' ' }
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -788,6 +797,10 @@ require('lazy').setup({
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
+
+      vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+      vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+      vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'none' })
     end,
   },
 
@@ -863,7 +876,39 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
+  { 'nvim-tree/nvim-web-devicons' },
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {
+        on_attach = function(bufnr)
+          local api = require 'nvim-tree.api'
+          -- default mappings
+          api.config.mappings.default_on_attach(bufnr)
+          vim.keymap.set('n', '<leader>n', api.tree.toggle, {
+            desc = 'Toggle file explorer',
+            noremap = true,
+            silent = true,
+            nowait = true,
+          })
 
+          -- make bg transparent
+          vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+          vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
+          -- Make nvim-tree bg transparent
+          vim.api.nvim_set_hl(0, 'NvimTreeEndOfBuffer', { bg = 'none' })
+          vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = 'none' })
+          vim.api.nvim_set_hl(0, 'NvimTreeNormalFloat', { bg = 'none' })
+          vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = 'none' })
+        end,
+      }
+    end,
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.

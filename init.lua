@@ -77,6 +77,8 @@ vim.g.loaded_netrwPlugin = 1
 -- Replace trailing tilde with empty char
 vim.opt.fillchars = { eob = ' ' }
 
+vim.keymap.set('n', 'd', '"_d', { desc = 'Delete without yanking' })
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -715,6 +717,11 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
       vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
       vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'none' })
+
+      -- Make line number more visible
+      vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = true })
+      vim.api.nvim_set_hl(0, 'LineNr', { fg = '#616161', bold = true })
+      vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#FB508F', bold = true })
     end,
   },
 

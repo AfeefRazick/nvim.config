@@ -55,6 +55,9 @@ return {
         -- Toggles
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
         map('n', '<leader>tD', gitsigns.toggle_deleted, { desc = '[T]oggle git show [D]eleted' })
+
+        -- Style changes
+        vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#39ff14', bold = true })
       end,
     },
   },

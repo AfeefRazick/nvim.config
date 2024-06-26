@@ -68,7 +68,7 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
---  -- My Custom Configurations --
+-- [[ My Custom Configurations ]]
 
 -- Disable netrw for nvim-tree
 vim.g.loaded_netrw = 1
@@ -77,7 +77,8 @@ vim.g.loaded_netrwPlugin = 1
 -- Replace trailing tilde with empty char
 vim.opt.fillchars = { eob = ' ' }
 
-vim.keymap.set('n', 'd', '"_d', { desc = 'Delete without yanking' })
+-- Remaps
+vim.keymap.set('n', ',p', '"0p', { desc = '[P]aste last yanked not deleted' })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -172,15 +173,7 @@ require('lazy').setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
+    opts = {},
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -842,7 +835,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

@@ -1,5 +1,6 @@
+--  TODO: make comments more visible
+
 -- Set <space> as the leader key
--- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -8,14 +9,9 @@ vim.g.maplocalleader = ' '
 vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
--- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Make line numbers default
 vim.opt.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
 -- vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
@@ -25,11 +21,9 @@ vim.opt.mouse = 'a'
 vim.opt.showmode = false
 
 -- Sync clipboard between OS and Neovim.
---  Remove this option if you want your OS clipboard to remain independent.
---  See `:help 'clipboard'`
 vim.opt.clipboard = 'unnamedplus'
 
--- Enable break indent
+-- Enable break indent (how sentence wraps when text longer than window, makes it prettier)
 vim.opt.breakindent = true
 
 -- Save undo history
@@ -54,8 +48,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
@@ -77,7 +69,7 @@ vim.g.loaded_netrwPlugin = 1
 -- Replace trailing tilde with empty char
 vim.opt.fillchars = { eob = ' ' }
 
--- Remaps
+-- My remaps
 vim.keymap.set('n', ',p', '"0p', { desc = '[P]aste last yanked not deleted' })
 
 -- [[ Basic Keymaps ]]
@@ -101,16 +93,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -121,7 +103,6 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
---  See `:help vim.highlight.on_yank()`
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
@@ -131,7 +112,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
---    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
@@ -143,9 +123,6 @@ vim.opt.rtp:prepend(lazypath)
 --
 --  To check the current status of your plugins, run
 --    :Lazy
---
---  You can press `?` in this menu for help. Use `:q` to close the window
---
 --  To update plugins you can run
 --    :Lazy update
 --
@@ -154,23 +131,12 @@ require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
-  -- NOTE: Plugins can also be added by using a table,
-  -- with the first argument being the link and the following
-  -- keys can be used to configure plugin behavior/loading/etc.
-  --
   -- Use `opts = {}` to force a plugin to be loaded.
-  --
   --  This is equivalent to:
   --    require('Comment').setup({})
 
-  -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
-  -- Here is a more advanced example where we pass configuration
-  -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
-  --    require('gitsigns').setup({ ... })
-  --
-  -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {},
@@ -215,11 +181,8 @@ require('lazy').setup({
   },
 
   -- NOTE: Plugins can specify dependencies.
-  --
   -- The dependencies are proper plugin specifications as well - anything
   -- you do for a plugin at the top level, you can do for a dependency.
-  --
-  -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
@@ -246,31 +209,10 @@ require('lazy').setup({
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
-      -- Telescope is a fuzzy finder that comes with a lot of different things that
-      -- it can fuzzy find! It's more than just a "file finder", it can search
-      -- many different aspects of Neovim, your workspace, LSP, and more!
-      --
-      -- The easiest way to use Telescope, is to start by doing something like:
       --  :Telescope help_tags
-      --
-      -- After running this command, a window will open up and you're able to
-      -- type in the prompt window. You'll see a list of `help_tags` options and
-      -- a corresponding preview of the help.
-      --
-      -- Two important keymaps to use while in Telescope are:
-      --  - Insert mode: <c-/>
-      --  - Normal mode: ?
-      --
-      -- This opens a window that shows you all of the keymaps for the current
-      -- Telescope picker. This is really useful to discover what Telescope can
-      -- do as well as how to actually do it!
 
-      -- [[ Configure Telescope ]]
-      -- See `:help telescope` and `:help telescope.setup()`
+      -- [[ Configure Telescope ]] See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
         -- defaults = {
         --   mappings = {
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -319,7 +261,6 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [/] in Open Files' })
 
-      -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
@@ -343,31 +284,6 @@ require('lazy').setup({
       { 'folke/neodev.nvim', opts = {} },
     },
     config = function()
-      -- Brief aside: **What is LSP?**
-      --
-      -- LSP is an initialism you've probably heard, but might not understand what it is.
-      --
-      -- LSP stands for Language Server Protocol. It's a protocol that helps editors
-      -- and language tooling communicate in a standardized fashion.
-      --
-      -- In general, you have a "server" which is some tool built to understand a particular
-      -- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-      -- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-      -- processes that communicate with some "client" - in this case, Neovim!
-      --
-      -- LSP provides Neovim with features like:
-      --  - Go to definition
-      --  - Find references
-      --  - Autocompletion
-      --  - Symbol Search
-      --  - and more!
-      --
-      -- Thus, Language Servers are external tools that must be installed separately from
-      -- Neovim. This is where `mason` and related plugins come into play.
-      --
-      -- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-      -- and elegantly composed help section, `:help lsp-vs-treesitter`
-
       --  This function gets run when an LSP attaches to a particular buffer.
       --    That is to say, every time a new file is opened that is associated with
       --    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
@@ -375,17 +291,10 @@ require('lazy').setup({
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
-          -- NOTE: Remember that Lua is a real programming language, and as such it is possible
-          -- to define small helper and utility functions so you don't have to repeat yourself.
-          --
-          -- In this case, we create a function that lets us more easily define mappings specific
-          -- for LSP related items. It sets the mode, buffer and description for us each time.
           local map = function(keys, func, desc)
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- Jump to the definition of the word under your cursor.
-          --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
           map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
 
@@ -393,7 +302,6 @@ require('lazy').setup({
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
-          --  Useful when your language has ways of declaring types without an actual implementation.
           map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
 
           -- Jump to the type of the word under your cursor.
@@ -402,23 +310,18 @@ require('lazy').setup({
           map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 
           -- Fuzzy find all the symbols in your current document.
-          --  Symbols are things like variables, functions, types, etc.
           map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 
           -- Fuzzy find all the symbols in your current workspace.
-          --  Similar to document symbols, except searches over your entire project.
           map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
           -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
           map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
+          -- Execute a code action, usually your cursor needs to be on top of an error or a suggestion from your LSP
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
           -- Opens a popup that displays documentation about the word under your cursor
-          --  See `:help K` for why this keymap.
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
@@ -788,7 +691,6 @@ require('lazy').setup({
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     end,
   },
-  { 'nvim-tree/nvim-web-devicons' },
   {
     'nvim-tree/nvim-tree.lua',
     version = '*',

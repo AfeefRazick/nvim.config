@@ -69,6 +69,11 @@ vim.opt.fillchars = { eob = ' ' }
 -- My remaps
 vim.keymap.set('n', ',p', '"0p', { desc = '[P]aste last yanked not deleted' })
 
+vim.api.nvim_set_keymap('n', '<leader>pf', ':!npx prettier --write %<CR>', { noremap = true, silent = true, desc = '[P]rettier [F]ormat' })
+
+-- [[ Basic Keymaps ]]
+--  See `:help vim.keymap.set()`
+
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -476,14 +481,12 @@ require('lazy').setup({
         end)(),
         dependencies = {
           -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -683,6 +686,7 @@ require('lazy').setup({
           vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = 'none' })
           vim.api.nvim_set_hl(0, 'NvimTreeNormalFloat', { bg = 'none' })
           vim.api.nvim_set_hl(0, 'NvimTreeNormalNC', { bg = 'none' })
+          vim.api.nvim_set_hl(0, 'NvimTreeWinSeparator', { bg = 'none', fg = '#1f2335' })
         end,
       }
     end,

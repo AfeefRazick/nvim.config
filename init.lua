@@ -667,6 +667,7 @@ require('lazy').setup({
     },
     config = function()
       require('nvim-tree').setup {
+        view = { side = 'right' },
         on_attach = function(bufnr)
           local api = require 'nvim-tree.api'
           -- default mappings

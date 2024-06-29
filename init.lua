@@ -69,8 +69,6 @@ vim.opt.fillchars = { eob = ' ' }
 -- My remaps
 vim.keymap.set('n', ',p', '"0p', { desc = '[P]aste last yanked not deleted' })
 
-vim.api.nvim_set_keymap('n', '<leader>pf', ':!npx prettier --write %<CR>', { noremap = true, silent = true, desc = '[P]rettier [F]ormat' })
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -447,8 +445,9 @@ require('lazy').setup({
         -- As you can see 'c' and 'c++' have been disabled
         local disable_filetypes = { c = true, cpp = true }
         return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          timeout_ms = 3000,
+          -- lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          lsp_format = 'fallback',
         }
       end,
       formatters_by_ft = {
@@ -458,7 +457,10 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
+        javascript = { { 'prettierd', 'prettier' } },
+        typescript = { { 'prettierd', 'prettier' } },
+        javascriptreact = { { 'prettierd', 'prettier' } },
+        typescriptreact = { { 'prettierd', 'prettier' } },
       },
     },
   },

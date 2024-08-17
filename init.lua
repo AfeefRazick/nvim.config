@@ -1,5 +1,3 @@
---  TODO: make comments more visible
-
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -66,8 +64,21 @@ vim.g.loaded_netrwPlugin = 1
 -- Replace trailing tilde with empty char
 vim.opt.fillchars = { eob = ' ' }
 
+-- Use Powershell over cmd on windows
+if vim.fn.has 'win64' == 1 or vim.fn.has 'win32' == 1 then
+  vim.opt.shell = vim.fn.executable 'pwsh' == 1 and 'pwsh' or 'powershell'
+  vim.opt.shellcmdflag =
+    '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+  vim.opt.shellredir = '-RedirectStandardOutput %s -NoNewWindow -Wait'
+  vim.opt.shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+  vim.opt.shellquote = ''
+  vim.opt.shellxquote = ''
+end
+
 -- My remaps
 vim.keymap.set('n', ',p', '"0p', { desc = '[P]aste last yanked not deleted' })
+vim.keymap.set('x', 'p', '"_dP', { desc = '[P]aste over selected without saving to register' })
+vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Move half page [D]own and center view' })
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -94,6 +105,11 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]], { desc = 'Move focus to the left window' })
+vim.keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]], { desc = 'Move focus to the right window' })
+vim.keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]], { desc = 'Move focus to the lower window' })
+vim.keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]], { desc = 'Move focus to the upper window' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -164,6 +180,7 @@ require('lazy').setup({
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+        ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
       }
       -- visual mode
       require('which-key').register({
@@ -205,11 +222,9 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]] See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
+        defaults = {
+          path_display = { 'truncate' },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -234,6 +249,13 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+      vim.keymap.set('n', '<leader>gf', builtin.git_files, { desc = '[G]it [F]iles' })
+      vim.keymap.set('n', '<leader>gc', builtin.git_commits, { desc = '[G]it [C]ommits' })
+      vim.keymap.set('n', '<leader>gb', builtin.git_branches, { desc = '[G]it [B]ranches' })
+      vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus' })
+      vim.keymap.set('n', '<leader>gS', builtin.git_stash, { desc = '[G]it [S]tash' })
+      vim.keymap.set('n', '<leader>gC', builtin.git_bcommits, { desc = '[G]it [C]ommits for current buffer' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -372,40 +394,22 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`tsserver`) will work just fine
-        -- tsserver = {},
-        --
+        -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
+        -- Some languages (like typescript) have entire language plugins that can be useful
 
-        lua_ls = {
-          -- cmd = {...},
-          -- filetypes = { ...},
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
-            },
-          },
-        },
+        tsserver = {}, -- typescript-tools.nvim: Feature rich + Faster alternative currently in beta
+        lua_ls = {},
+        cssls = {},
+        somesass_ls = {},
+        tailwindcss = {},
+        prettierd = {},
       }
 
       -- Use :Mason to check installed tools and install new ones
       require('mason').setup()
 
       -- Add other tools here that you want Mason to install, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = vim.tbl_keys(servers)
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -571,6 +575,11 @@ require('lazy').setup({
   {
     'folke/tokyonight.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
+    opts = {
+      on_highlights = function(hl)
+        hl.Comment['fg'] = '#828282'
+      end,
+    },
     init = function()
       vim.cmd.colorscheme 'tokyonight-storm'
 
@@ -670,20 +679,13 @@ require('lazy').setup({
     config = function()
       require('nvim-tree').setup {
         view = { side = 'right' },
+        update_focused_file = { enable = true },
         on_attach = function(bufnr)
           local api = require 'nvim-tree.api'
           -- default mappings
           api.config.mappings.default_on_attach(bufnr)
-          vim.keymap.set('n', '<leader>n', api.tree.toggle, {
-            desc = 'Toggle file explorer',
-            noremap = true,
-            silent = true,
-            nowait = true,
-          })
+          vim.keymap.set('n', '<leader>n', api.tree.toggle, { desc = 'Toggle file explorer' })
 
-          -- make bg transparent
-          vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
-          vim.api.nvim_set_hl(0, 'NormalFloat', { bg = 'none' })
           -- Make nvim-tree bg transparent
           vim.api.nvim_set_hl(0, 'NvimTreeEndOfBuffer', { bg = 'none' })
           vim.api.nvim_set_hl(0, 'NvimTreeNormal', { bg = 'none' })
@@ -694,13 +696,48 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup {
+        open_mapping = [[<c-\>]],
+        terminal_mappings = true,
+      }
+
+      local Terminal = require('toggleterm.terminal').Terminal
+      local lazygit = Terminal:new {
+        cmd = 'lazygit status',
+        hidden = true,
+        direction = 'float',
+        float_opts = {
+          border = 'curved',
+        },
+        on_open = function(term)
+          -- Enter insert mode and type '_' to have status pane in split view
+          vim.api.nvim_command 'startinsert'
+          vim.api.nvim_buf_set_keymap(term.bufnr, 'n', 'q', '<cmd>close<CR>', { noremap = true, silent = true })
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('_', true, false, true), 'n', true)
+        end,
+      }
+
+      local function lazygit_toggle()
+        lazygit:toggle()
+      end
+
+      vim.keymap.set('n', '<leader>lg', lazygit_toggle, { desc = 'Open [L]azy [G]it', noremap = true, silent = true })
+    end,
+  },
+  {
+    'tpope/vim-fugitive',
+  },
+
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`

@@ -10,8 +10,6 @@ return {
         typescript = { 'eslint' },
         javascriptreact = { 'eslint' },
         typescriptreact = { 'eslint' },
-        dockerfile = { 'hadolint' },
-        json = { 'jsonlint' },
       }
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

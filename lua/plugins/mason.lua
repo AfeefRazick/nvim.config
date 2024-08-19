@@ -118,6 +118,7 @@ return {
         somesass_ls = {},
         tailwindcss = {},
         prettierd = {},
+        markdownlint = {},
       }
 
       -- Use :Mason to check installed tools and install new ones

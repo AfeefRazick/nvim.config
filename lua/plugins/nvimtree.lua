@@ -10,6 +10,9 @@ return {
       require('nvim-tree').setup {
         view = { side = 'right' },
         update_focused_file = { enable = true },
+        filters = {
+          custom = { '.git' },
+        },
         on_attach = function(bufnr)
           local api = require 'nvim-tree.api'
           -- default mappings

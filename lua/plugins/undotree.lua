@@ -20,6 +20,11 @@ return {
           remap_directional_keys('l', '<right>', '<plug>UndotreePreviousSavedState')
         end,
       })
+
+      -- diff command does not work on windows, its equivalent in windows is FC
+      if vim.fn.has 'win64' == 1 or vim.fn.has 'win32' == 1 then
+        vim.g.undotree_DiffCommand = 'FC'
+      end
     end,
   },
 }

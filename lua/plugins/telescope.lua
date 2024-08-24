@@ -31,7 +31,11 @@ return {
         defaults = {
           path_display = { 'truncate' },
         },
-        -- pickers = {}
+        pickers = {
+          buffers = {
+            sort_lastused = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),

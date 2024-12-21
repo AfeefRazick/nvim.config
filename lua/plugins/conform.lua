@@ -31,11 +31,11 @@ return {
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
-        javascript = { { 'prettierd', 'prettier' } },
-        typescript = { { 'prettierd', 'prettier' } },
-        javascriptreact = { { 'prettierd', 'prettier' } },
-        typescriptreact = { { 'prettierd', 'prettier' } },
-        css = { { 'prettierd', 'prettier' } },
+        javascript = { 'prettier', stop_after_first = true },
+        typescript = { 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettier', stop_after_first = true },
+        css = { 'prettier', stop_after_first = true },
       },
     },
   },
